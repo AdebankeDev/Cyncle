@@ -1,0 +1,223 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Cyncle</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--w:430px;--bg:#fff8f2;--ink:#35143b;--mut:#7a5c80;--line:#edded1;--bd:#f0ddd9;--pri:#99249d;--lime:#cbe85b;--lav:#b99af7;--warn:#a34f00;--red:#b82e38}
+*{box-sizing:border-box;margin:0}body{font-family:Inter,system-ui,sans-serif;background:#f3e6dc;color:var(--ink);display:flex;justify-content:center}
+#app{width:100%;max-width:var(--w);min-height:100dvh;background:var(--bg);padding:72px 24px 165px;position:relative;display:flex;flex-direction:column;gap:20px}
+h1{font-size:34px;font-weight:700;line-height:1.15}h2{font-size:30px;font-weight:700;line-height:1.15}.q{font-size:22px;font-weight:500}
+.m{color:var(--mut);font-size:14px}.s{font-size:12px;color:var(--mut)}.lbl{font-size:12px;font-weight:600;color:var(--mut);letter-spacing:.04em}
+.btn{border:0;border-radius:999px;background:var(--pri);color:#fff;font:600 17px Inter;padding:18px 24px;width:100%;cursor:pointer}
+.btn.dark{background:var(--ink)}.btn:disabled{opacity:.5}.ghost{background:none;border:0;font:600 16px Inter;color:var(--ink);cursor:pointer;padding:6px}
+.chip{display:inline-block;border-radius:999px;padding:8px 14px;font:600 13px Inter;background:var(--lav);color:var(--ink);border:0}
+.chip.btnlike{background:#fff;border:1px solid var(--bd);font-weight:500;cursor:pointer}.chip.red{background:var(--red);color:#fff}
+.card{background:#fff;border:1px solid var(--bd);border-radius:20px;padding:17px;display:flex;flex-direction:column;gap:10px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:8px;background:var(--lime)}
+.row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:17px;font-weight:500}
+.row b{flex:1;font-weight:500}.dot{width:10px;height:10px;border-radius:50%;background:var(--ink)}
+.days{display:flex;gap:4px;overflow:auto}.day{min-width:46px;height:64px;border-radius:23px;background:#fff;border:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--mut)}
+.day b{font-size:15px;color:var(--ink)}.day.on{background:var(--ink);color:#f5e0e5}.day.on b{color:#fff}
+input,textarea{font:17px Inter;border:1px solid var(--bd);border-radius:14px;padding:12px;width:100%;background:#fff;color:var(--ink)}
+input[type=range]{padding:0;accent-color:var(--pri)}
+.grow{flex:1}.bot{margin-top:auto;display:flex;flex-direction:column;gap:12px}
+#menu{position:absolute;top:20px;right:24px;background:none;border:0;font-size:26px;cursor:pointer;color:var(--ink)}
+#drop{position:absolute;top:56px;right:24px;width:240px;background:#fff;border:1px solid var(--bd);border-radius:20px;padding:9px;box-shadow:0 12px 30px #35143b22;z-index:9;display:none}
+#drop a{display:block;padding:12px 14px;border-radius:12px;font-weight:500;cursor:pointer}#drop a:hover{background:var(--bg)}
+#mic{position:fixed;bottom:84px;right:max(24px,calc(50% - var(--w)/2 + 24px));width:52px;height:52px;border-radius:26px;background:var(--ink);border:0;color:#fff;font-size:20px;cursor:pointer}
+#mic.rec{background:var(--red)}
+#tabs{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:min(100vw,var(--w));padding:0 24px}#tabs div{background:#fff;border:1px solid var(--bd);border-radius:999px;display:flex;justify-content:space-around;padding:15px 8px;font-size:13px;font-weight:600;color:var(--mut)}
+#tabs a{cursor:pointer}#tabs a.on{color:var(--pri)}
+.orb{width:168px;height:168px;border-radius:50%;margin:10px auto;background:radial-gradient(circle,var(--pri) 0 38%,var(--lav) 39% 62%,#f1e4fb 63%)}
+.bub{padding:12px 16px;border-radius:18px;max-width:85%;font-size:16px;line-height:1.4}.me{background:var(--ink);color:#fff;align-self:flex-end}.ai{background:#fff;border:1px solid var(--bd)}
+
+@media(min-width:600px) and (max-width:899px){:root{--w:640px}}
+@media(min-width:900px){
+ body{display:block;background:var(--bg)}
+ #app{width:auto;max-width:none;margin-left:240px;padding:64px clamp(32px,7vw,110px) 80px}
+ #app>*{width:100%;max-width:680px}
+ body.nosb #app{margin-left:0}
+ #app>.chip{width:auto}
+ #menu,#drop,#tabs{display:none!important}
+ #side{display:flex!important;position:fixed;left:0;top:0;bottom:0;width:240px;flex-direction:column;gap:4px;padding:28px 16px;background:#fff;border-right:1px solid var(--line);overflow:auto}
+ #side[hidden]{display:none!important}#side .brand{font:700 24px Inter;padding:0 16px 24px}
+ #side a{padding:12px 16px;border-radius:12px;font-weight:600;color:var(--mut);cursor:pointer}#side a.on{background:var(--bg);color:var(--pri)}
+ #ai{right:36px!important;bottom:36px!important}
+ #mic{right:36px;left:auto;margin-left:0;bottom:36px}
+}
+.sev{display:flex;gap:6px}.sev button{flex:1;border:1px solid var(--bd);background:#fff;border-radius:12px;padding:10px;font:600 15px Inter;cursor:pointer;color:var(--ink)}.sev button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.tabsx{display:flex;gap:8px;overflow:auto;padding-bottom:4px}.tabsx .chip{white-space:nowrap;cursor:pointer}.sym{padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:10px}.sym.on b{color:var(--pri)}
+#side{display:none}
+#ai{position:fixed;bottom:84px;right:max(24px,calc(50% - var(--w)/2 + 24px));width:52px;height:52px;border-radius:26px;background:var(--pri);border:0;color:#fff;font-size:22px;cursor:pointer}
+.dot.p1{background:var(--red)}.dot.p2{background:#d98300}.dot.p3{background:#7aa000}
+.cal{background:#fff;border:1px solid var(--bd);border-radius:20px;padding:14px}.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}.cg span{font-size:12px;color:var(--mut);padding:4px}
+.cd{position:relative;border:0;background:none;border-radius:12px;height:40px;font:500 15px Inter;color:var(--ink);cursor:pointer}.cd.td{box-shadow:inset 0 0 0 1px var(--pri)}.cd.on{background:var(--ink);color:#fff}
+.cd u{position:absolute;bottom:5px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%}u.p1{background:var(--red)}u.p2{background:#d98300}u.p3{background:#7aa000}
+.imp button.i1.on{background:var(--red);border-color:var(--red)}.imp button.i2.on{background:#d98300;border-color:#d98300}.imp button.i3.on{background:#7aa000;border-color:#7aa000}
+.sg{background:#fff}.mv{display:flex;align-items:center;gap:10px}.pill{border-radius:999px;padding:8px 14px;background:var(--bg);border:1px solid var(--bd);font-weight:600;font-size:14px}.pill.to{background:var(--lime);border-color:var(--lime)}
+.ar{display:flex;flex-direction:column;align-items:center;font-size:20px;color:var(--mut)}.ar small{font-size:11px}.why{font-size:14px;color:var(--mut);background:var(--bg);border-radius:12px;padding:10px 12px}
+.steps{display:flex;gap:6px}.steps i{flex:1;height:6px;border-radius:3px;background:var(--line)}.steps i.dn{background:var(--lime)}.steps i.cu{background:var(--pri)}
+.sky{width:76px;height:76px;border-radius:24px;position:relative;overflow:hidden;flex:none}.sky.am{background:linear-gradient(#ffd9a8,#fff1d6)}.sky.pm{background:linear-gradient(#9fd8ff,#e6f6ff)}.sky.ev{background:linear-gradient(#35143b,#6a3d86)}
+.sky .sun,.sky .mn,.sky .st{position:absolute;display:none}.am .sun,.pm .sun{display:block;width:34px;height:34px;border-radius:50%;background:#ffb300;left:21px}
+.am .sun{animation:rise 2.6s ease-out both}.pm .sun{top:14px;animation:glow 2.4s ease-in-out infinite alternate}
+.ev .mn{display:block;width:30px;height:30px;border-radius:50%;background:#fff3c4;left:22px;top:18px;animation:fl 3s ease-in-out infinite alternate}
+.ev .st{display:block;width:4px;height:4px;border-radius:50%;background:#fff;animation:tw 1.6s infinite alternate}.s1{left:10px;top:12px}.s2{left:58px;top:24px;animation-delay:.5s!important}.s3{left:50px;top:58px;animation-delay:1s!important}
+.greet{display:flex;align-items:center;gap:16px}.greet h1{animation:fadeup .8s ease-out both}.orb{animation:pulse 3s ease-in-out infinite}
+@keyframes rise{from{top:78px}to{top:30px}}@keyframes glow{from{box-shadow:0 0 0 6px #ffb30033}to{box-shadow:0 0 0 14px #ffb30022}}@keyframes tw{from{opacity:.2}to{opacity:1}}
+@keyframes fl{from{transform:translateY(-3px)}to{transform:translateY(3px)}}@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes pulse{50%{transform:scale(1.06)}}
+.cmp{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--bd);border-radius:999px;padding:6px 6px 6px 18px}.cmp{width:100%}.cmp input{min-width:0;border:0;padding:10px 0;background:none;outline:0;flex:1;width:auto;border-radius:0}
+.cmp button{width:42px;height:42px;border-radius:50%;border:0;cursor:pointer;font-size:18px;background:none;color:var(--ink);flex:none}.cmp #send{background:var(--pri);color:#fff}.cmp #cm.rec{background:var(--red);color:#fff}
+.bot>.ghost,.bot>.s{align-self:center;text-align:center}
+#app>.wc{max-width:420px;margin:auto;display:flex;flex-direction:column;gap:18px;align-items:center;text-align:center}.wc input{text-align:center}
+.scene{zoom:2.6;margin:6px 0}.gh{font-size:36px}.cmp button{width:46px;height:46px}.cmp svg,#mic svg{display:block;margin:auto}
+</style></head><body><div id="app"></div><nav id="side" hidden></nav><div id="tabs" hidden><div></div></div><button id="mic" hidden title="Record voice">🎙</button><button id="ai" hidden title="Cyncle Assistant">✦</button>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const api=async(p,b)=>{const r=await fetch('/api/'+p,b?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:{});if(r.status==429){const e=await r.json();alert(e.error);throw new Error(e.error)}return r.json()};
+const NAV=[['home','Today'],['chat','Cyncle Assistant'],['checkin','Check-in'],['suggest','Suggested changes'],['week','Calendar'],['cycle','Your cycle'],['insights','Insights'],['privacy','Settings']];
+const TABS=[['home','Today'],['week','Week'],['insights','Insights'],['privacy','Settings']];
+const CAP={menstrual:['Low',.1],follicular:['Great',.9],ovulation:['Great',.9],luteal:['Okay',.6]};
+let S={name:localStorage.name||'',cur:null,cards:[],i:0,dec:[],thread:null,msgs:[],last:null,chk:{pain:7,energy:3,focus:4},rec:null};
+const fmt=d=>new Date(d+'T00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+const bar=p=>`<div class="bar"><i style="width:${Math.round(p*100)}%"></i></div>`;
+const mark=(x,t)=>`<div class="card"><b>${t}</b><div class="m">${x}</div></div>`;
+
+async function delPeriod(d){if(!confirm('Delete the period logged on '+fmt(d)+'?'))return;const r=await api('period/delete',{start_date:d});r.ok?cycle():alert(r.error)}
+async function delTask(id,cb){if(!confirm('Delete this task?'))return;await api('tasks/delete',{id});cb()}
+const parse=t=>{let m=t.match(/^Move "(.*)" from (\S+) to (\S+)\?$/);if(m)return{kind:'move',task:m[1],from:m[2],to:m[3]};m=t.match(/^Cancel "(.*)"\?$/);return m?{kind:'cancel',task:m[1]}:{kind:'other',task:t}};
+const MIC='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+const dd=(a,b)=>Math.round((new Date(b)-new Date(a))/864e5);
+const sc=c=>{const p=parse(c.text),w=(c.reason||'Based on how you feel today').replace(/_/g,' ');return `<div class="card sg"><div class="lbl">${p.kind=='move'?'MOVE TASK':p.kind=='cancel'?'CANCEL TASK':'SUGGESTION'}</div><div class="q" style="font-weight:600">${esc(p.task)}</div>${p.kind=='move'?`<div class="mv"><span class="pill">${fmt(p.from)}</span><span class="ar">→<small>+${dd(p.from,p.to)} days</small></span><span class="pill to">${fmt(p.to)}</span></div>`:''}<div class="why">Why: ${esc(w)}</div></div>`};
+const cal=(T,sel,cm)=>{const [y,m]=cm.split('-').map(Number),f=new Date(y,m-1,1),n=new Date(y,m,0).getDate(),c=[];for(let i=0;i<f.getDay();i++)c.push('<i></i>');
+ for(let d=1;d<=n;d++){const ds=`${cm}-${String(d).padStart(2,'0')}`,ts=T.filter(t=>t.due==ds);c.push(`<button class="cd ${ds==sel?'on':''} ${ds==S.today?'td':''}" data-d="${ds}">${d}${ts.length?`<u class="p${Math.min(...ts.map(t=>t.priority))}"></u>`:''}</button>`)}
+ return `<div class="cal"><div class="ch"><button class="ghost" data-m="-1">‹</button><b>${f.toLocaleDateString('en',{month:'long',year:'numeric'})}</b><button class="ghost" data-m="1">›</button></div><div class="cg">${'SMTWTFS'.split('').map(x=>`<span>${x}</span>`).join('')}${c.join('')}</div></div>`};
+function shell(h,on,mic){document.body.classList.remove('nosb');$('#app').innerHTML=`<button id="menu">☰</button><div id="drop">${NAV.map(n=>`<a data-go="${n[0]}">${n[1]}</a>`).join('')}</div>`+h;
+ $('#tabs').hidden=false;S.mic=mic;$('#mic').hidden=!mic||mic=='chat';$('#ai').hidden=!!mic;$('#side').hidden=false;$('#side').innerHTML='<div class="brand">Cyncle</div>'+NAV.map(n=>`<a data-go="${n[0]}" class="${n[0]==S.page?'on':''}">${n[1]}</a>`).join('');$('#tabs div').innerHTML=TABS.map(t=>`<a data-go="${t[0]}" class="${t[0]==on?'on':''}">${t[1]}</a>`).join('');
+ $('#menu').onclick=()=>{const d=$('#drop');d.style.display=d.style.display=='block'?'none':'block'};
+ document.querySelectorAll('[data-go]').forEach(a=>a.onclick=()=>go(a.dataset.go))}
+const go=s=>({picker,welcome,home,chat,checkin,suggest,week,cycle,insights,privacy}[s])();
+
+function welcome(){document.body.classList.add('nosb');$('#tabs').hidden=$('#mic').hidden=$('#ai').hidden=$('#side').hidden=true;
+ $('#app').innerHTML=`<div class="wc"><div class="orb" style="width:88px;height:88px"></div><h1>Cyncle</h1><p class="m" style="font-size:17px">Plan your days around your rhythm</p><input id="nm" placeholder="Your name" value="${esc(S.name)}"><button class="btn" id="go">Get started</button><p class="s">Your data is stored on the server, separate for each browser</p></div>`;
+ $('#go').onclick=()=>{S.name=$('#nm').value.trim();localStorage.name=S.name;localStorage.seen=1;greeting()}}
+
+function greeting(){S.page='greeting';sessionStorage.greeted=1;document.body.classList.add('nosb');$('#tabs').hidden=$('#mic').hidden=$('#ai').hidden=$('#side').hidden=true;
+ const hr=new Date().getHours(),k=hr>=5&&hr<12?'am':hr>=12&&hr<18?'pm':'ev',g={am:'Good morning',pm:'Good afternoon',ev:'Good evening'}[k],sub={am:'A fresh start. Let’s plan a day that fits you.',pm:'Halfway through. Let’s see how you’re feeling.',ev:'Winding down. Let’s look at what’s ahead.'}[k];
+ $('#app').innerHTML=`<div class="wc"><div class="scene"><div class="sky ${k}"><b class="sun"></b><b class="mn"></b><i class="st s1"></i><i class="st s2"></i><i class="st s3"></i></div></div><h1 class="gh">${g},<br>${esc(S.name||'there')}!</h1><p class="m" style="font-size:17px">${sub}</p><button class="btn" id="gc">Continue</button></div>`;
+ $('#gc').onclick=()=>{clearTimeout(S.gt);const b=$('#gc');b.disabled=true;b.textContent='Loading…';home().catch(()=>{b.disabled=false;b.textContent='Continue'})};
+ clearTimeout(S.gt);S.gt=setTimeout(()=>{if(S.page=='greeting')home()},5000);api('home').catch(()=>{})}
+
+async function home(){S.page='home';const h=await api('home');S.cards=h.pending;S.thread=h.thread;const p=h.phase,t=new Date(h.today+'T00:00');
+ const dn=[...Array(7)].map((_,i)=>{const d=new Date(t);d.setDate(t.getDate()-t.getDay()+i);return `<div class="day ${d.toDateString()==t.toDateString()?'on':''}">${d.toLocaleDateString('en',{weekday:'short'})}<b>${d.getDate()}</b></div>`}).join('');
+ const hr=new Date().getHours(),k=hr>=5&&hr<12?'am':hr>=12&&hr<18?'pm':'ev',g={am:'Good morning',pm:'Good afternoon',ev:'Good evening'}[k],cap=p.phase?CAP[p.phase]:null;
+ shell(`<div class="greet"><div class="sky ${k}"><b class="sun"></b><b class="mn"></b><i class="st s1"></i><i class="st s2"></i><i class="st s3"></i></div><h1>${g},<br>${esc(S.name||'there')}!</h1></div><div class="days">${dn}</div><div class="q">How are you feeling right now?</div>
+ <button class="btn" id="ci" style="display:flex;justify-content:space-between">Check in <span>→</span></button>
+ <div class="card"><b style="font-weight:500">How's your energy right now?</b><div style="display:flex;gap:8px"><span class="chip btnlike" data-en="low">Low</span><span class="chip btnlike" data-en="okay">Okay</span><span class="chip btnlike" data-en="great">Great</span></div></div>
+ <div class="s">${fmt(h.today)}${p.cycle_day?' · Day '+p.cycle_day:''}</div>
+ ${cap?`<div class="card"><div style="display:flex;justify-content:space-between"><b>Today's capacity</b><b>${cap[0]}</b></div>${bar(cap[1])}<div class="s">Estimate from your own logs</div></div>`:''}
+ ${S.cards.length?`<div class="card"><b>${S.cards.length} suggestion${S.cards.length>1?'s':''} ready</b>${S.cards.map(sc).join('')}<button class="btn" id="rv" style="padding:14px">Review suggestions</button></div>`:''}
+ <div class="lbl">TODAY</div><div>${h.tasks.length?h.tasks.map(x=>`<div class="row"><span class="dot p${x.priority}" data-done="${x.id}" title="Mark done" style="cursor:pointer"></span><b>${esc(x.title)}</b><span class="m">${fmt(x.due)}</span><button class="ghost" data-del="${x.id}" title="Delete">✕</button></div>`).join(''):'<p class="m">No active tasks.</p>'}</div>
+ <div class="m">${h.done} of ${h.total} tasks done</div>${bar(h.total?h.done/h.total:0)}`,'home');
+ document.querySelectorAll('[data-done]').forEach(e=>e.onclick=async()=>{await api('tasks/done',{id:+e.dataset.done});home()});
+ document.querySelectorAll('[data-del]').forEach(e=>e.onclick=()=>delTask(+e.dataset.del,home));
+ document.querySelectorAll('[data-en]').forEach(e=>e.onclick=async()=>{const k=e.dataset.en;if(k=='great')return notice({advice:'Great. No changes needed today.'});outcome(await api('chat',{text:'',picked:[{symptom:'fatigue',severity:k=='low'?4:2}]}))});
+ $('#ci').onclick=checkin;if($('#rv'))$('#rv').onclick=()=>{S.i=0;S.dec=[];suggest()}}
+
+function checkin(){S.page='checkin';const C=S.chk,r=(k,l)=>`<div><div style="display:flex;justify-content:space-between;font-size:18px;font-weight:500"><span>${l}</span><b id="v${k}">${C[k]}</b></div><input type="range" min="0" max="10" value="${C[k]}" data-k="${k}"></div>`;
+ shell(`<h1>How are you today?</h1><p class="m" style="font-size:16px">Takes about 10 seconds. Or tap the mic and tell me.</p>${r('pain','Pain')}${r('energy','Energy')}${r('focus','Focus')}<textarea id="tx" rows="2" placeholder="Anything else? (optional)"></textarea><a class="m" data-go="picker" style="cursor:pointer;text-decoration:underline">Pick specific symptoms instead →</a><div class="bot"><button class="btn" id="plan">Plan my day</button></div>`,'home','checkin');
+ document.querySelectorAll('input[type=range]').forEach(e=>e.oninput=()=>{C[e.dataset.k]=+e.value;$('#v'+e.dataset.k).textContent=e.value});
+ $('#plan').onclick=async()=>{$('#plan').disabled=true;const sev=n=>Math.max(1,Math.min(5,Math.ceil(n/2))),pk=[];
+  if(C.pain>=1)pk.push({symptom:'abdominal_pain',severity:sev(C.pain)});if(C.energy<=5)pk.push({symptom:'fatigue',severity:sev(10-C.energy)});if(C.focus<=5)pk.push({symptom:'difficulty_concentrating',severity:sev(10-C.focus)});
+  const t=$('#tx').value.trim();let v;if(t&&!pk.length)v=await api('chat',{text:t});else{v=await api('chat',{text:'',picked:pk});}outcome(v)}}
+
+function outcome(v){S.last=v;S.thread=v.thread;if(v.mode=='seek_care')return seek(v);
+ if(v.mode=='propose_changes'&&v.cards.length){S.cards=v.cards;S.i=0;S.dec=[];return suggest()}return notice(v)}
+
+function notice(v){const t=[v.ai_reply||v.reply||v.advice,...(v.notes||[]),v.why].filter(Boolean);
+ shell(`<h2>${v.mode=='decided'?'Done':'Noted'}</h2>${t.map(x=>`<p class="m" style="font-size:17px">${esc(x)}</p>`).join('')}<div class="bot"><button class="btn dark" data-go="home">Back to Today</button></div>`,'home')}
+
+function seek(v){shell(`<span class="chip red" style="align-self:flex-start">Needs attention</span><h1>Please get this checked</h1><p class="q">${esc((v.messages_out||[]).join(' '))}</p><p class="m" style="font-size:17px">${esc(v.advice)}</p><p class="s" style="font-size:14px">No task changes were suggested.</p><div class="bot"><button class="btn dark" data-go="home">I understand</button></div>`,'home')}
+
+async function suggest(){S.page='suggest';if(!S.cards.length){const h=await api('home');S.cards=h.pending;S.thread=S.thread||h.thread}
+ if(!S.cards.length)return shell(`<h2>No suggestions right now</h2><p class="m" style="font-size:17px">Check in to get a plan for your day.</p><div class="bot"><button class="btn" data-go="checkin">Check in</button></div>`,'home');
+ const c=S.cards[S.i],n=S.cards.length;
+ shell(`<div class="steps">${S.cards.map((_,k)=>`<i class="${k<S.i?'dn':k==S.i?'cu':''}"></i>`).join('')}</div><div class="m">Suggestion ${S.i+1} of ${n}</div>${sc(c)}
+ <input id="why" placeholder="Why not? (optional, I'll remember)"><div class="bot"><button class="btn" id="ok">Approve</button><button class="ghost" id="no">Not now</button><p class="s">${esc(c.note||'Suggestions only, not medical advice.')}</p></div>`,'home');
+ const next=async(d)=>{S.dec.push(d);if(++S.i<S.cards.length)return suggest();const r=await api('decide',{thread:S.thread,decisions:S.dec});S.cards=[];if(r.stale)return notice({advice:'Those suggestions were already answered.'});notice({mode:'decided',ai_reply:r.ai_reply,advice:r.advice+' '+(r.results||[]).map(x=>x.result).join(' ')})};
+ $('#ok').onclick=()=>next({id:c.id,action:'approve'});$('#no').onclick=()=>next({id:c.id,action:'reject',reason:$('#why').value})}
+
+async function picker(){S.page='picker';if(!S.catalog){S.catalog=await api('catalog');S.cat=Object.keys(S.catalog)[0];S.sel={}}
+ const nice=k=>k.replace(/_/g,' ').replace(/^./,c=>c.toUpperCase()),n=Object.keys(S.sel).length;
+ shell(`<h1 style="font-size:30px">Log symptoms</h1><div class="tabsx">${Object.keys(S.catalog).map(k=>`<span class="chip ${k==S.cat?'':'btnlike'}" data-cat="${k}">${nice(k)}</span>`).join('')}</div>
+ <div>${S.catalog[S.cat].map(x=>`<div class="sym ${S.sel[x.code]?'on':''}"><div style="display:flex;justify-content:space-between;font-size:17px"><b style="font-weight:500" data-t="${x.code}">${esc(x.label)}</b><span class="s">${x.plans?'':'tracking only'}</span></div>${S.sel[x.code]?`<div class="sev">${[1,2,3,4,5].map(v=>`<button class="${S.sel[x.code]==v?'on':''}" data-c="${x.code}" data-v="${v}">${v}</button>`).join('')}</div>`:''}</div>`).join('')}</div>
+ <div class="bot"><button class="btn" id="sv" ${n?'':'disabled'}>Save${n?' '+n:''} and plan</button></div>`,'home');
+ document.querySelectorAll('[data-cat]').forEach(e=>e.onclick=()=>{S.cat=e.dataset.cat;picker()});
+ document.querySelectorAll('[data-t]').forEach(e=>e.parentElement.parentElement.onclick=ev=>{if(ev.target.closest('.sev'))return;const c=e.dataset.t;S.sel[c]?delete S.sel[c]:S.sel[c]=3;picker()});
+ document.querySelectorAll('[data-v]').forEach(e=>e.onclick=()=>{S.sel[e.dataset.c]=+e.dataset.v;picker()});
+ $('#sv').onclick=async()=>{$('#sv').disabled=true;const pk=Object.entries(S.sel).map(([symptom,severity])=>({symptom,severity}));S.sel={};outcome(await api('chat',{text:'',picked:pk}))}}
+
+async function week(){S.page='week';const w=await api('week'),T=w.tasks;S.today=w.today;S.day=S.day||w.today;S.cm=S.cm||w.today.slice(0,7);S.imp=S.imp||2;S.tt=S.tt||'';
+ const IMP={1:['High','Protected: Cyncle moves this one last.'],2:['Medium','Normal: Cyncle may move it if needed.'],3:['Low','Flexible: Cyncle moves this first when you need rest.']},dT=T.filter(t=>t.due==S.day),past=S.day<S.today;
+ shell(`<h1>Calendar</h1>${cal(T,S.day,S.cm)}<div class="lbl">${fmt(S.day).toUpperCase()}</div>
+ <div>${dT.map(x=>`<div class="row"><span class="dot p${x.priority}" data-done="${x.id}" title="Mark done" style="cursor:pointer"></span><b>${esc(x.title)}</b><span class="m">${(IMP[x.priority]||[''])[0]}</span><button class="ghost" data-del="${x.id}" title="Delete">✕</button></div>`).join('')||'<p class="m">Nothing scheduled this day.</p>'}</div>
+ <div class="card"><b>Add a task for ${fmt(S.day)}</b><input id="tt" placeholder="Task title"><div class="lbl">HOW IMPORTANT IS IT?</div>
+ <div class="sev imp">${[1,2,3].map(v=>`<button class="i${v} ${S.imp==v?'on':''}" data-i="${v}">${IMP[v][0]}</button>`).join('')}</div><div class="s">${IMP[S.imp][1]}</div>
+ ${past?'<div class="s" style="color:var(--red)">Pick today or a later day.</div>':''}<button class="btn" id="at" ${past?'disabled':''}>Add task</button></div>`,'week');
+ $('#tt').value=S.tt;$('#tt').oninput=e=>S.tt=e.target.value;
+ document.querySelectorAll('[data-d]').forEach(e=>e.onclick=()=>{S.day=e.dataset.d;week()});
+ document.querySelectorAll('[data-m]').forEach(e=>e.onclick=()=>{const [y,m]=S.cm.split('-').map(Number),d=new Date(y,m-1+(+e.dataset.m),1);S.cm=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');week()});
+ document.querySelectorAll('[data-i]').forEach(e=>e.onclick=()=>{S.imp=+e.dataset.i;week()});
+ document.querySelectorAll('[data-done]').forEach(e=>e.onclick=async()=>{await api('tasks/done',{id:+e.dataset.done});week()});
+ document.querySelectorAll('[data-del]').forEach(e=>e.onclick=()=>delTask(+e.dataset.del,week));
+ $('#at').onclick=async()=>{const t=S.tt.trim();if(!t)return $('#tt').focus();await api('tasks',{title:t,due:S.day,priority:S.imp});S.tt='';week()}}
+
+function chat(){S.page='chat';const orb=!S.msgs.length;shell(`${orb?`<div class="orb"></div><h1 style="text-align:center;font-size:30px">How can I<br>help you today?</h1><p class="m" style="text-align:center">Tell me how you feel, or ask about your day.</p>`:`<div style="display:flex;flex-direction:column;gap:10px">${S.msgs.map(m=>`<div class="bub ${m[0]}">${esc(m[1])}</div>`).join('')}</div>`}
+ <div class="bot"><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip btnlike" data-go="picker">Log symptoms</span><span class="chip btnlike" data-go="checkin">Plan my day</span><span class="chip btnlike" id="why">Why this change?</span></div>
+ <div class="cmp"><input id="ci" placeholder="Message Cyncle…"><button id="cm" title="Record voice">${MIC}</button><button id="send" title="Send">↑</button></div></div>`,'','chat');
+ const send=async(t)=>{t=(t||$('#ci').value).trim();if(!t)return;S.msgs.push(['me',t]);const v=await api('chat',{text:t});S.last=v;
+  if(v.mode=='seek_care'){S.msgs.push(['ai',v.advice]);return seek(v)}if(v.mode=='propose_changes'&&v.cards.length){S.msgs.push(['ai','I have '+v.cards.length+' suggestion(s) for you.']);return outcome(v)}
+  S.msgs.push(['ai',v.ai_reply||v.reply||v.advice||v.why||'Noted.']);chat()};
+ $('#cm').onclick=()=>{if(S.rec)return S.rec.stop();S.target='chat';startRec()};$('#send').onclick=()=>send();$('#ci').onkeydown=e=>{if(e.key=='Enter')send()};$('#why').onclick=()=>{S.cards=(S.last&&S.last.cards)||[];S.msgs.push(['ai',(S.cards[0]&&S.cards[0].reason)||'No change has been suggested yet, so there is nothing to explain.']);chat()};S.send=send}
+
+async function cycle(){S.page='cycle';const p=await api('cycle'),n=p.cycle_length||28,R=p.range||{min:Math.max(18,n-3),max:n+3},ov=Math.max(n-14,7),C=2*Math.PI*80,
+ seg=[[1,5,'#e0526a','Period'],[6,ov-2,'#cbe85b','Follicular'],[ov-1,ov+1,'#b99af7','Ovulation window'],[ov+2,n,'#f0a14a','Luteal']];
+ const arcs=seg.filter(s=>s[1]>=s[0]).map(s=>{const l=(s[1]-s[0]+1)/n*C,o=(s[0]-1)/n*C;return `<circle cx="100" cy="100" r="80" fill="none" stroke="${s[2]}" stroke-width="20" stroke-dasharray="${l-2} ${C-l+2}" stroke-dashoffset="${-o}" transform="rotate(-90 100 100)"/>`}).join('');
+ const a=p.cycle_day?((p.cycle_day-.5)/n*2*Math.PI):null,dot=a!==null?`<circle cx="${100+80*Math.sin(a)}" cy="${100-80*Math.cos(a)}" r="11" fill="#35143b" stroke="#fff" stroke-width="3"/>`:'';
+ shell(`<h1>Your cycle</h1><div class="card" style="align-items:center"><svg viewBox="0 0 200 200" width="230" height="230">${arcs}${dot}<text x="100" y="98" text-anchor="middle" font-size="30" font-weight="700" fill="#35143b">${p.cycle_day?'Day '+p.cycle_day:'–'}</text><text x="100" y="122" text-anchor="middle" font-size="13" fill="#7a5c80">${p.phase?p.phase+' phase':'No period logged'}</text></svg>
+ <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">${seg.map(s=>`<span class="s"><i style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${s[2]};margin-right:5px"></i>${s[3]}</span>`).join('')}</div>
+ <p style="font-size:16px;text-align:center">${p.error?esc(p.error):p.next_period=='overdue'?'Your period looks about '+p.period_late_by_days+' days late':'Next period around <b>'+fmt(p.next_period)+'</b> · cycle of about '+n+' days'}</p></div>
+ <div class="card"><b>When did your period start?</b><input type="date" id="pd" value="${p.today}" min="${p.min_date}" max="${p.today}"><div class="s" id="pm">Pick a date from the last 60 days.</div><button class="btn" id="pb">Log period start</button></div>
+ <div class="card"><b>Your typical cycle length</b><div class="s">Cyncle uses the middle of your range (${Math.round((R.min+R.max)/2)} days) to work out your phases.</div>
+ <div style="display:flex;gap:12px"><div class="grow"><div class="s">Shortest (days)</div><input type="number" id="cmin" min="18" max="60" value="${R.min}"></div><div class="grow"><div class="s">Longest (days)</div><input type="number" id="cmax" min="18" max="60" value="${R.max}"></div></div>
+ <div class="s" id="rm"></div><button class="btn dark" id="rb">Save range</button></div>
+ ${p.history.length?`<div><div class="lbl">LOGGED PERIODS</div>${p.history.map(d=>`<div class="row"><span class="dot" style="background:#e0526a"></span><b>${fmt(d)}</b><button class="ghost" onclick="delPeriod('${d}')" aria-label="Delete period ${fmt(d)}" style="color:var(--red);font-size:14px">Delete</button></div>`).join('')}</div>`:''}`,'');
+ $('#pb').onclick=async()=>{const r=await api('period',{start_date:$('#pd').value});r.ok?cycle():$('#pm').textContent=r.error};
+ $('#rb').onclick=async()=>{const r=await api('cycle/range',{shortest:+$('#cmin').value,longest:+$('#cmax').value});r.ok?cycle():$('#rm').textContent=r.error}}
+
+ async function insights(){S.page='insights';const i=await api('insights');const p=i.pattern;shell(`<h1>Insights</h1><div><div class="lbl">YOUR PATTERN</div><p style="font-size:19px;font-weight:500;margin:8px 0">${p?esc(p.text):'Log a few more check-ins to see a pattern.'}</p>${p?`<span class="chip">Based on ${p.cycles} cycle${p.cycles>1?'s':''}</span>`:''}</div>
+ <div><div class="lbl">YOU DECIDE</div><p style="font-size:19px;font-weight:500;margin:8px 0">${i.decided?`You approved ${i.approved} of ${i.decided} suggestions.`:'No decisions yet.'}</p>${bar(i.decided?i.approved/i.decided:0)}</div>
+ <div><div class="lbl">WHY PHASES MATTER</div><p class="m" style="font-size:16px;margin-top:8px">Energy can dip during your period, so lighter plans often help. Everyone differs, so I learn from your logs.</p></div><div class="bot"><button class="btn dark" data-go="chat">Ask a question</button></div>`,'insights')}
+
+async function privacy(){S.page='privacy';const p=await api('privacy');shell(`<h1 style="font-size:30px">Privacy and mode</h1>${mark('Safety checks, cycle logic, approvals and calendar still work.',p.offline?'Offline mode on':'AI agents on')}
+ <div class="card"><b>Voice transcription</b><div class="m">Your recording is sent to Groq's hosted Whisper to turn it into text. It is deleted from the app server right after.</div></div>
+ ${mark('Phase, symptoms and task titles. Never your name, phone, email or period dates.','Sent to the AI')}
+ ${mark('On the app server, kept separate for each browser. No account needed. Use Delete my data to erase it and start fresh.','Where your data lives')}
+ <div class="card"><b>What I learned from your rejections</b>${p.rejections.length?p.rejections.map(r=>`<div class="m">"${esc(r.task)}": not proposed again for ${p.cooldown} days${r.her_reason?' ('+esc(r.her_reason)+')':''}</div>`).join(''):'<div class="m">Nothing yet.</div>'}</div>
+ <div class="bot"><a href="/api/ics" download><button class="btn dark" style="width:100%">Export calendar (.ics)</button></a><button class="btn" id="del" style="background:#fff;color:var(--red);border:1px solid var(--red)">Delete my data</button></div>`,'privacy');
+ $('#del').onclick=async()=>{if(!confirm('Delete all your check-ins, tasks and cycle data from the server and start fresh?'))return;await api('delete',{});localStorage.clear();sessionStorage.clear();S.name='';S.msgs=[];S.catalog=null;S.cards=[];welcome()}
+ }
+
+// voice: record -> transcribe -> confirm -> same chat flow
+$('#mic').onclick=()=>{if(S.rec)return S.rec.stop();S.target=S.mic;startRec()};$('#ai').onclick=()=>go('chat');
+async function startRec(){const b=$('#cm')||$('#mic');
+ try{const st=await navigator.mediaDevices.getUserMedia({audio:true}),ch=[],r=new MediaRecorder(st);S.rec=r;b.classList.add('rec');b.innerHTML='<b style="font-size:16px">■</b>';
+  r.ondataavailable=e=>ch.push(e.data);r.onstop=async()=>{st.getTracks().forEach(t=>t.stop());S.rec=null;b.classList.remove('rec');b.innerHTML=MIC;
+   const f=new FormData();f.append('file',new Blob(ch,{type:r.mimeType}),'rec.webm');const t=await (await fetch('/api/voice',{method:'POST',body:f})).json();voiceConfirm(t)};r.start();setTimeout(()=>S.rec&&S.rec.stop(),60000)}
+ catch(e){alert('Microphone not available. Type your message instead.')}};
+function voiceConfirm(t){if(!t.ok)return shell(`<h2>Didn't catch that</h2><p class="m" style="font-size:17px">${esc(t.error)}</p><div class="bot"><button class="btn" data-go="home">OK</button></div>`,'');
+ shell(`<h2>Did I hear you right?</h2><textarea id="vt" rows="3" style="font-size:20px">${esc(t.text)}</textarea><p class="s">Transcribed by Groq's hosted Whisper. The recording is deleted from the server right after.</p><div class="bot"><button class="btn" id="use">Use this</button><button class="ghost" data-go="home">Cancel</button></div>`,'');
+ $('#use').onclick=async()=>{const x=$('#vt').value,v=await api('chat',{text:x});if(S.target=='chat'&&v.mode!='seek_care'&&v.mode!='propose_changes'){S.msgs.push(['me',x],['ai',v.ai_reply||v.reply||v.advice||v.why||'Noted.']);return chat()}outcome(v);}}
+
+localStorage.seen?(sessionStorage.greeted?home():greeting()):welcome();
+$('#mic').innerHTML=MIC;
+</script></body></html>
