@@ -84,7 +84,7 @@ def home():
     p = A.get_phase(); ts = A.get_tasks()
     pend = A.render_cards()
     th = next((t for t, x in VIEWS.items() if x.get("_owner") == me()), None)
-    r = A.db.execute("SELECT COALESCE(SUM(status='done'),0) d, COUNT(*) n FROM tasks").fetchone()
+    r = A.db.execute("SELECT COALESCE(SUM(status='done'),0) d, COUNT(*) n FROM tasks WHERE status IN ('active','done') AND due=?", (str(date.today()),)).fetchone()
     return {"phase": p, "tasks": ts, "pending": pend, "thread": th, "today": str(date.today()), "done": r["d"], "total": r["n"]}
 
 class Done(BaseModel):

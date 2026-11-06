@@ -14,7 +14,7 @@ h1{font-size:34px;font-weight:700;line-height:1.15}h2{font-size:30px;font-weight
 .card{background:#fff;border:1px solid var(--bd);border-radius:20px;padding:17px;display:flex;flex-direction:column;gap:10px}
 .bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:8px;background:var(--lime)}
 .row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:17px;font-weight:500}
-.row b{flex:1;font-weight:500}.dot{width:10px;height:10px;border-radius:50%;background:var(--ink)}
+.row b{flex:1;font-weight:500}.dot{width:10px;height:10px;border-radius:50%;background:var(--ink)}.ck{width:22px;height:22px;border:2px solid var(--pri);border-radius:6px;background:#fff;cursor:pointer;flex:none}.ck:hover{background:var(--lav)}
 .days{display:flex;gap:4px;overflow:auto}.day{min-width:46px;height:64px;border-radius:23px;background:#fff;border:1px solid var(--bd);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--mut)}
 .day b{font-size:15px;color:var(--ink)}.day.on{background:var(--ink);color:#f5e0e5}.day.on b{color:#fff}
 input,textarea{font:17px Inter;border:1px solid var(--bd);border-radius:14px;padding:12px;width:100%;background:#fff;color:var(--ink)}
@@ -76,7 +76,7 @@ const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>(
 const api=async(p,b)=>{const r=await fetch('/api/'+p,b?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}:{});if(r.status==429){const e=await r.json();alert(e.error);throw new Error(e.error)}return r.json()};
 const NAV=[['home','Today'],['chat','Cyncle Assistant'],['checkin','Check-in'],['suggest','Suggested changes'],['week','Calendar'],['cycle','Your cycle'],['insights','Insights'],['privacy','Settings']];
 const TABS=[['home','Today'],['week','Week'],['insights','Insights'],['privacy','Settings']];
-const CAP={menstrual:['Low',.1],follicular:['Great',.9],ovulation:['Great',.9],luteal:['Okay',.6]};
+const CAP={menstrual:['Low',.1],follicular:['Great',.9],ovulation:['Great',.9],luteal:['Okay',.6]},EN={low:['Low',.1],okay:['Okay',.6],great:['Great',.9]};
 let S={name:localStorage.name||'',cur:null,cards:[],i:0,dec:[],thread:null,msgs:[],last:null,chk:{pain:7,energy:3,focus:4},rec:null};
 const fmt=d=>new Date(d+'T00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
 const bar=p=>`<div class="bar"><i style="width:${Math.round(p*100)}%"></i></div>`;
@@ -109,18 +109,20 @@ function greeting(){S.page='greeting';sessionStorage.greeted=1;document.body.cla
 
 async function home(){S.page='home';const h=await api('home');S.cards=h.pending;S.thread=h.thread;const p=h.phase,t=new Date(h.today+'T00:00');
  const dn=[...Array(7)].map((_,i)=>{const d=new Date(t);d.setDate(t.getDate()-t.getDay()+i);return `<div class="day ${d.toDateString()==t.toDateString()?'on':''}">${d.toLocaleDateString('en',{weekday:'short'})}<b>${d.getDate()}</b></div>`}).join('');
- const hr=new Date().getHours(),k=hr>=5&&hr<12?'am':hr>=12&&hr<18?'pm':'ev',g={am:'Good morning',pm:'Good afternoon',ev:'Good evening'}[k],cap=p.phase?CAP[p.phase]:null;
+ const od=h.tasks.filter(x=>x.due<h.today),odv=S.odAll?od:od.slice(0,3),td=h.tasks.filter(x=>x.due==h.today),rw=x=>`<div class="row"><span class="ck" data-done="${x.id}" role="checkbox" aria-checked="false" aria-label="Mark done" title="Mark done"></span><span class="dot p${x.priority}"></span><b>${esc(x.title)}</b><span class="m">${fmt(x.due)}</span><button class="ghost" data-del="${x.id}" title="Delete">✕</button></div>`,hr=new Date().getHours(),k=hr>=5&&hr<12?'am':hr>=12&&hr<18?'pm':'ev',g={am:'Good morning',pm:'Good afternoon',ev:'Good evening'}[k],en=(()=>{try{return JSON.parse(localStorage.en||'{}')}catch(e){return{}}})(),cap=en.d==h.today&&EN[en.k]?EN[en.k]:p.phase?CAP[p.phase]:null;
  shell(`<div class="greet"><div class="sky ${k}"><b class="sun"></b><b class="mn"></b><i class="st s1"></i><i class="st s2"></i><i class="st s3"></i></div><h1>${g},<br>${esc(S.name||'there')}!</h1></div><div class="days">${dn}</div><div class="q">How are you feeling right now?</div>
  <button class="btn" id="ci" style="display:flex;justify-content:space-between">Check in <span>→</span></button>
  <div class="card"><b style="font-weight:500">How's your energy right now?</b><div style="display:flex;gap:8px"><span class="chip btnlike" data-en="low">Low</span><span class="chip btnlike" data-en="okay">Okay</span><span class="chip btnlike" data-en="great">Great</span></div></div>
  <div class="s">${fmt(h.today)}${p.cycle_day?' · Day '+p.cycle_day:''}</div>
  ${cap?`<div class="card"><div style="display:flex;justify-content:space-between"><b>Today's capacity</b><b>${cap[0]}</b></div>${bar(cap[1])}<div class="s">Estimate from your own logs</div></div>`:''}
  ${S.cards.length?`<div class="card"><b>${S.cards.length} suggestion${S.cards.length>1?'s':''} ready</b>${S.cards.map(sc).join('')}<button class="btn" id="rv" style="padding:14px">Review suggestions</button></div>`:''}
- <div class="lbl">TODAY</div><div>${h.tasks.length?h.tasks.map(x=>`<div class="row"><span class="dot p${x.priority}" data-done="${x.id}" title="Mark done" style="cursor:pointer"></span><b>${esc(x.title)}</b><span class="m">${fmt(x.due)}</span><button class="ghost" data-del="${x.id}" title="Delete">✕</button></div>`).join(''):'<p class="m">No active tasks.</p>'}</div>
+ ${od.length?`<div class="lbl" style="color:var(--red)">OVERDUE</div><div>${odv.map(rw).join('')}</div>${od.length>3?`<button class="ghost" id="odm">${S.odAll?'Show less':'Show '+(od.length-3)+' more'}</button>`:''}`:''}
+ <div class="lbl">TODAY</div><div>${td.length?td.map(rw).join(''):'<p class="m">No tasks for today.</p>'}</div>
  <div class="m">${h.done} of ${h.total} tasks done</div>${bar(h.total?h.done/h.total:0)}`,'home');
  document.querySelectorAll('[data-done]').forEach(e=>e.onclick=async()=>{await api('tasks/done',{id:+e.dataset.done});home()});
  document.querySelectorAll('[data-del]').forEach(e=>e.onclick=()=>delTask(+e.dataset.del,home));
- document.querySelectorAll('[data-en]').forEach(e=>e.onclick=async()=>{const k=e.dataset.en;if(k=='great')return notice({advice:'Great. No changes needed today.'});outcome(await api('chat',{text:'',picked:[{symptom:'fatigue',severity:k=='low'?4:2}]}))});
+ document.querySelectorAll('[data-en]').forEach(e=>e.onclick=async()=>{const k=e.dataset.en;try{localStorage.en=JSON.stringify({d:h.today,k})}catch(x){}if(k=='great')return notice({advice:'Great. No changes needed today.'});outcome(await api('chat',{text:'',picked:[{symptom:'fatigue',severity:k=='low'?4:2}]}))});
+ if($('#odm'))$('#odm').onclick=()=>{S.odAll=!S.odAll;home()};
  $('#ci').onclick=checkin;if($('#rv'))$('#rv').onclick=()=>{S.i=0;S.dec=[];suggest()}}
 
 function checkin(){S.page='checkin';const C=S.chk,r=(k,l)=>`<div><div style="display:flex;justify-content:space-between;font-size:18px;font-weight:500"><span>${l}</span><b id="v${k}">${C[k]}</b></div><input type="range" min="0" max="10" value="${C[k]}" data-k="${k}"></div>`;
@@ -142,9 +144,9 @@ async function suggest(){S.page='suggest';if(!S.cards.length){const h=await api(
  if(!S.cards.length)return shell(`<h2>No suggestions right now</h2><p class="m" style="font-size:17px">Check in to get a plan for your day.</p><div class="bot"><button class="btn" data-go="checkin">Check in</button></div>`,'home');
  const c=S.cards[S.i],n=S.cards.length;
  shell(`<div class="steps">${S.cards.map((_,k)=>`<i class="${k<S.i?'dn':k==S.i?'cu':''}"></i>`).join('')}</div><div class="m">Suggestion ${S.i+1} of ${n}</div>${sc(c)}
- <input id="why" placeholder="Why not? (optional, I'll remember)"><div class="bot"><button class="btn" id="ok">Approve</button><button class="ghost" id="no">Not now</button><p class="s">${esc(c.note||'Suggestions only, not medical advice.')}</p></div>`,'home');
- const next=async(d)=>{S.dec.push(d);if(++S.i<S.cards.length)return suggest();const r=await api('decide',{thread:S.thread,decisions:S.dec});S.cards=[];if(r.stale)return notice({advice:'Those suggestions were already answered.'});notice({mode:'decided',ai_reply:r.ai_reply,advice:r.advice+' '+(r.results||[]).map(x=>x.result).join(' ')})};
- $('#ok').onclick=()=>next({id:c.id,action:'approve'});$('#no').onclick=()=>next({id:c.id,action:'reject',reason:$('#why').value})}
+ <input id="why" placeholder="Why not? (optional, I'll remember)"><div class="bot"><button class="btn" id="ok">Approve</button><button class="ghost" id="sk">Skip</button><button class="ghost" id="no" style="color:var(--red)">Reject</button><p class="s">${esc(c.note||'Suggestions only, not medical advice.')}</p></div>`,'home');
+ const next=async(d)=>{if(d)S.dec.push(d);if(++S.i<S.cards.length)return suggest();const r=await api('decide',{thread:S.thread,decisions:S.dec});S.cards=[];if(r.stale)return notice({advice:'Those suggestions were already answered.'});notice({mode:'decided',ai_reply:r.ai_reply,advice:r.advice+' '+(r.results||[]).map(x=>x.result).join(' ')})};
+ $('#sk').onclick=()=>next(null);$('#ok').onclick=()=>next({id:c.id,action:'approve'});$('#no').onclick=()=>next({id:c.id,action:'reject',reason:$('#why').value})}
 
 async function picker(){S.page='picker';if(!S.catalog){S.catalog=await api('catalog');S.cat=Object.keys(S.catalog)[0];S.sel={}}
  const nice=k=>k.replace(/_/g,' ').replace(/^./,c=>c.toUpperCase()),n=Object.keys(S.sel).length;
@@ -159,7 +161,7 @@ async function picker(){S.page='picker';if(!S.catalog){S.catalog=await api('cata
 async function week(){S.page='week';const w=await api('week'),T=w.tasks;S.today=w.today;S.day=S.day||w.today;S.cm=S.cm||w.today.slice(0,7);S.imp=S.imp||2;S.tt=S.tt||'';
  const IMP={1:['High','Protected: Cyncle moves this one last.'],2:['Medium','Normal: Cyncle may move it if needed.'],3:['Low','Flexible: Cyncle moves this first when you need rest.']},dT=T.filter(t=>t.due==S.day),past=S.day<S.today;
  shell(`<h1>Calendar</h1>${cal(T,S.day,S.cm)}<div class="lbl">${fmt(S.day).toUpperCase()}</div>
- <div>${dT.map(x=>`<div class="row"><span class="dot p${x.priority}" data-done="${x.id}" title="Mark done" style="cursor:pointer"></span><b>${esc(x.title)}</b><span class="m">${(IMP[x.priority]||[''])[0]}</span><button class="ghost" data-del="${x.id}" title="Delete">✕</button></div>`).join('')||'<p class="m">Nothing scheduled this day.</p>'}</div>
+ <div>${dT.map(x=>`<div class="row"><span class="ck" data-done="${x.id}" role="checkbox" aria-checked="false" aria-label="Mark done" title="Mark done"></span><span class="dot p${x.priority}"></span><b>${esc(x.title)}</b><span class="m">${(IMP[x.priority]||[''])[0]}</span><button class="ghost" data-del="${x.id}" title="Delete">✕</button></div>`).join('')||'<p class="m">Nothing scheduled this day.</p>'}</div>
  <div class="card"><b>Add a task for ${fmt(S.day)}</b><input id="tt" placeholder="Task title"><div class="lbl">HOW IMPORTANT IS IT?</div>
  <div class="sev imp">${[1,2,3].map(v=>`<button class="i${v} ${S.imp==v?'on':''}" data-i="${v}">${IMP[v][0]}</button>`).join('')}</div><div class="s">${IMP[S.imp][1]}</div>
  ${past?'<div class="s" style="color:var(--red)">Pick today or a later day.</div>':''}<button class="btn" id="at" ${past?'disabled':''}>Add task</button></div>`,'week');

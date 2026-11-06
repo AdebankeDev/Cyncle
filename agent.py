@@ -1072,7 +1072,7 @@ def why_no_plan(v):
         return "No active task is due within the next 2 days, so there is nothing to move."
     blocked = [t["title"] for t in soon if recently_rejected(t["id"])]
     if blocked:
-        return f"She rejected a change to these in the last {REJECT_COOLDOWN_DAYS} days, so they are not proposed again: {blocked}"
+        return f"You rejected a change to these in the last {REJECT_COOLDOWN_DAYS} days, so they are not proposed again: {blocked}"
     pend = [t["title"] for t in soon if any(p["task_id"] == t["id"] for p in pending_proposals())]
     if pend:
         return f"These already have a proposal waiting: {pend}"
