@@ -12,7 +12,7 @@ API_HOST = {"groq": "api.groq.com"}[PROVIDER]
 
 # Model IDs change over time. Check the current list in your provider's console.
 MODELS = {
-    "groq":      {"main": "llama-3.3-70b-versatile", "fast": "llama-3.1-8b-instant"},
+    "groq":      {"main": "openai/gpt-oss-20b", "fast": "openai/gpt-oss-120b"},
 }
 MODEL_MAIN = MODELS[PROVIDER]["main"]   # Check-in, Planner, Cycle (need good reasoning and tool use)
 MODEL_FAST = MODELS[PROVIDER]["fast"]   # Orchestrator (only picks a label)
